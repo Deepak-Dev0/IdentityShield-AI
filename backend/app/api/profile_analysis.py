@@ -7,7 +7,12 @@ from app.schemas.profile_analysis import (
     ProfileAnalysisCreate,
     ProfileAnalysisResponse,
 )
-from app.services.profile_analysis_service import create_profile_analysis
+
+from app.services.profile_analysis_service import (
+    create_profile_analysis,
+    get_all_profile_analyses,
+    get_profile_analysis_by_id,
+)
 
 router = APIRouter(
     prefix="/profile-analysis",
@@ -19,8 +24,31 @@ router = APIRouter(
     "/",
     response_model=ProfileAnalysisResponse,
 )
+
+#1
 def create_profile(
     profile: ProfileAnalysisCreate,
     db: Session = Depends(get_db),
 ):
     return create_profile_analysis(db, profile)
+
+
+@router.get(
+    "/",
+    response_model=list[ProfileAnalysisResponse],
+)
+def get_all_profiles(
+    db: Session = Depends(get_db),
+):
+    return get_all_profile_analyses(db)
+
+
+@router.get(
+    "/{profile_id}",
+    response_model=ProfileAnalysisResponse,
+)
+def get_profile(
+    profile_id: int,
+    db: Session = Depends(get_db),
+):
+    return get_profile_analysis_by_id(db, profile_id)
